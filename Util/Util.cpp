@@ -52,3 +52,14 @@ t_parametros Util::tomarParametros(int argc,char* argv[]) {
 
     return tParametros;
 }
+
+int Util::crearProcesosHijos(int cantidadHijos) {
+    int pid = 0;
+    for (int i = 0; i < cantidadHijos; i++) {
+        pid = fork();
+        if (pid == 0) {
+            break;
+        }
+    }
+    return pid;
+}

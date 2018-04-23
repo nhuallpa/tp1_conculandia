@@ -13,9 +13,15 @@ private:
 
 public:
 
-    std::string serializar();
+    Persona();
 
-    void desserializar(const char * buffer);
+    Persona(int tipoPersona, int numeroDocumento);
+
+    static int TAMANIO_SERIALIZADO;
+
+    const void * serializar();
+
+    void deserializar(const char * buffer);
 
 
     int getTipoPersona() const;

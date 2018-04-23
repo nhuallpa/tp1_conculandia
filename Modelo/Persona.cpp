@@ -9,13 +9,16 @@
 #include "Persona.h"
 
 
-std::string Persona::serializar() {
+int Persona::TAMANIO_SERIALIZADO = 15;
+
+
+const void* Persona::serializar() {
     std::stringstream serializado;
     serializado << std::setw(4)<< this->getTipoPersona() << std::setw(11)<<this->getNumeroDocumento();
-    return serializado.str();
+    return static_cast<const void*>(serializado.str().c_str());
 }
 
-void Persona::desserializar(const char * buffer) {
+void Persona::deserializar(const char * buffer) {
     std::string persona = buffer;
     this->setTipoPersona(atoi(persona.substr(0,4).c_str()));
     this->setNumeroDocumento(atoi(persona.substr(4,11).c_str()));
@@ -36,3 +39,7 @@ int Persona::getNumeroDocumento() const {
 void Persona::setNumeroDocumento(int numeroDocumento) {
     Persona::numeroDocumento = numeroDocumento;
 }
+
+Persona::Persona(int tipoPersona, int numeroDocumento) : tipoPersona(tipoPersona), numeroDocumento(numeroDocumento) {}
+
+Persona::Persona() {}

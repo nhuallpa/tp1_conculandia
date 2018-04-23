@@ -1,0 +1,14 @@
+set(SOURCE
+        ${SOURCE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/Persona.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Ventanilla.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/FilaEspera.cpp
+        PARENT_SCOPE
+        )
+set(HEADERS
+        ${HEADERS}
+        ${CMAKE_CURRENT_SOURCE_DIR}/Persona.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/Ventanilla.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/FilaEspera.h
+        PARENT_SCOPE
+        )

@@ -31,18 +31,25 @@ void FilaEspera::inicializar(int cantidadVentanillas) {
 
     static const std::string ARCHIVO_FIFO = "/tmp/archivo_fifo";
 
+    SIGINT_Handler sigint_handler;
+    SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
+
     FifoEscritura canal ( ARCHIVO_FIFO );
     canal.abrir();
 
     for (Persona persona : personas) {
+        sleep(2);
         canal.escribir(persona.serializar(), Persona::TAMANIO_SERIALIZADO);
+        if (sigint_handler.getGracefulQuit() == 1) {
+            break;
+        }
     }
 
-    sleep(2);
     canal.cerrar();
     for (int i = 0; i < cantidadVentanillas; ++i) {
         wait(0);
     }
     canal.eliminar();
-
+    SignalHandler::destruir();
+    std::cout << "Finalizo correctamente Fila espera "<< std::endl;
 }

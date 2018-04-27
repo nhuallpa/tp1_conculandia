@@ -22,10 +22,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <signal.h>
+#include <assert.h>
+
+#include "../Util/SignalHandler.h"
+#include "../Util/SIGINT_Handler.h"
 
 class Ventanilla {
 
+protected:
+    /*static void handlerSigint(int signum);
+    void registrarManejardorQuit();*/
 public:
+    //static sig_atomic_t graceful_quit;
     void iniciarAtencion(int cantidadSellos);
 };
 

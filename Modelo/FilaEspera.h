@@ -23,6 +23,9 @@
 #include <stdlib.h>
 
 
+#include "../Util/SignalHandler.h"
+#include "../Util/SIGINT_Handler.h"
+
 
 class FilaEspera {
 private:

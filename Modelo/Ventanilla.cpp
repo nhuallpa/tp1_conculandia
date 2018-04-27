@@ -5,9 +5,17 @@
 #include "Ventanilla.h"
 
 
+/**
+ * Inicia la atension de una ventanilla de aduana para recibir personas.
+ * @param cantidadSellos
+ */
 void Ventanilla::iniciarAtencion(int cantidadSellos) {
 
     static const std::string ARCHIVO_FIFO = "/tmp/archivo_fifo";
+
+
+    SIGINT_Handler sigint_handler;
+    SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
 
     FifoLectura canal ( ARCHIVO_FIFO );
     canal.abrir();
@@ -16,7 +24,7 @@ void Ventanilla::iniciarAtencion(int cantidadSellos) {
 
     ssize_t bytesleidos = canal.leer(static_cast<void*>(buffer), Persona::TAMANIO_SERIALIZADO);
 
-    while (bytesleidos > 0) {
+    while (bytesleidos > 0 && sigint_handler.getGracefulQuit() == 0) {
         if (bytesleidos == Persona::TAMANIO_SERIALIZADO) {
             std::string mensaje = buffer;
             Persona persona;
@@ -28,7 +36,14 @@ void Ventanilla::iniciarAtencion(int cantidadSellos) {
         bytesleidos = canal.leer(static_cast<void*>(buffer), Persona::TAMANIO_SERIALIZADO);
     }
     if (bytesleidos == -1) {
-        std::cout << "Error al atender personas " << std::strerror(errno) << std::endl;
+        if (errno == EINTR) {
+            std::cout << "Se intrumpio la atencion " << std::strerror(errno) << std::endl;
+        } else {
+            std::cout << "Error al atender personas " << std::strerror(errno) << std::endl;
+        }
     }
+
     canal.cerrar();
+    SignalHandler::destruir();
+    std::cout << "Salimos correctamente ";
 }

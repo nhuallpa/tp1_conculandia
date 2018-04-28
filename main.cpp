@@ -34,22 +34,10 @@ int main(int argc, char* argv[]) {
             cout << "Soy la ventanilla " << getpid() << endl;
             Ventanilla ventanilla;
             ventanilla.iniciarAtencion(params.cantSellos);
-
             exit(0);
         }
         else registroHijos[i] = pid;
     }
-
-    int pidFilaEspera = fork();
-    if (pidFilaEspera == 0) {
-        // es el hijo fila espera
-        cout << "Soy la fila espera " << getpid() << endl;
-        FilaEspera filaEspera;
-        filaEspera.inicializar(params.cantVentanillas);
-
-        exit(0);
-    }
-    registroHijos[params.cantVentanillas] = pidFilaEspera;
 
     Menu menu;
     menu.inicializar(params, registroHijos);

@@ -4,7 +4,7 @@
 
 #include "Util.h"
 
-using namespace std;
+
 
 t_parametros Util::tomarParametros(int argc,char* argv[]) {
     int c;

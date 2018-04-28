@@ -4,15 +4,13 @@
 
 #include "Menu.h"
 
+using namespace std;
 
 /**
- * Imprimo y loopeo sobre el menu
- * @param params
- * @param registroHijos
- * @return
- */
-
-int Menu::inicializar(const t_parametros &params, const int *registroHijos) {
+ * Inicia el menu interactivo para que el usuario pueda controlar
+ * las ventanillas, fila de espera y el abm de personas de riesgo.
+ * */
+int Menu::inicializar(t_parametros params, int* registroHijos) {
     string input;
     while (input != "S") {
         cout << "MENU" << endl;
@@ -27,5 +25,3 @@ int Menu::inicializar(const t_parametros &params, const int *registroHijos) {
         kill(registroHijos[i], SIGINT);
     }
 }
-
-

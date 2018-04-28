@@ -4,14 +4,12 @@
 
 #include "Util.h"
 
+using namespace std;
 
 t_parametros Util::tomarParametros(int argc,char* argv[]) {
-
     int c;
-
     bool hayParametros = true;
-
-    t_parametros tParametros;
+    t_parametros params;
 
     while (hayParametros)
     {
@@ -35,10 +33,10 @@ t_parametros Util::tomarParametros(int argc,char* argv[]) {
         {
 
             case 'v':
-                tParametros.cantVentanillas = atoi(optarg);
+                params.cantVentanillas = atoi(optarg);
                 break;
             case 's':
-                tParametros.cantSellos = atoi(optarg);
+                params.cantSellos = atoi(optarg);
                 break;
 
             case '?':
@@ -50,16 +48,14 @@ t_parametros Util::tomarParametros(int argc,char* argv[]) {
         }
     }
 
-    return tParametros;
+    return params;
 }
 
 int Util::crearProcesosHijos(int cantidadHijos) {
     int pid = 0;
     for (int i = 0; i < cantidadHijos; i++) {
         pid = fork();
-        if (pid == 0) {
-            break;
-        }
+        if (pid == 0) break;
     }
     return pid;
 }

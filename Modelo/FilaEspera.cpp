@@ -4,9 +4,10 @@
 
 #include "FilaEspera.h"
 
+using namespace std;
 
-std::vector<Persona> FilaEspera::obtenerPersonas() {
-    std::vector<Persona> personas;
+vector<Persona> FilaEspera::obtenerPersonas() {
+    vector<Persona> personas;
     FILE *fp;
     int numeroDocumento;
     int tipoDocumento;
@@ -27,9 +28,9 @@ std::vector<Persona> FilaEspera::obtenerPersonas() {
 
 
 void FilaEspera::inicializar(int cantidadVentanillas) {
-    std::vector<Persona> personas = obtenerPersonas();
+    vector<Persona> personas = obtenerPersonas();
 
-    static const std::string ARCHIVO_FIFO = "/tmp/archivo_fifo";
+    static const string ARCHIVO_FIFO = "/tmp/archivo_fifo";
 
     SIGINT_Handler sigint_handler;
     SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
@@ -51,5 +52,5 @@ void FilaEspera::inicializar(int cantidadVentanillas) {
     }
     canal.eliminar();
     SignalHandler::destruir();
-    std::cout << "Finalizo correctamente Fila espera "<< std::endl;
+    cout << "Fila espera " << getpid() << " finalizo correctamente" << endl;
 }

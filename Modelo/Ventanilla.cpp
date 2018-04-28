@@ -4,6 +4,7 @@
 
 #include "Ventanilla.h"
 
+using namespace std;
 
 /**
  * Inicia la atension de una ventanilla de aduana para recibir personas.
@@ -11,7 +12,7 @@
  */
 void Ventanilla::iniciarAtencion(int cantidadSellos) {
 
-    static const std::string ARCHIVO_FIFO = "/tmp/archivo_fifo";
+    static const string ARCHIVO_FIFO = "/tmp/archivo_fifo";
 
 
     SIGINT_Handler sigint_handler;
@@ -26,24 +27,24 @@ void Ventanilla::iniciarAtencion(int cantidadSellos) {
 
     while (bytesleidos > 0 && sigint_handler.getGracefulQuit() == 0) {
         if (bytesleidos == Persona::TAMANIO_SERIALIZADO) {
-            std::string mensaje = buffer;
+            string mensaje = buffer;
             Persona persona;
             persona.deserializar(buffer);
-            std::cout<< "Soy una ventanilla  " << getpid() <<" y recibi la persona DNI "<< persona.getNumeroDocumento()<< std::endl;
+            cout<< "Soy una ventanilla " << getpid() <<" y recibi la persona DNI "<< persona.getNumeroDocumento()<< endl;
         } else if (bytesleidos > 0){
-            std::cout << "La cantidad de bytes leidos no coincide " << std::endl;
+            cout << "La cantidad de bytes leidos no coincide " << endl;
         }
         bytesleidos = canal.leer(static_cast<void*>(buffer), Persona::TAMANIO_SERIALIZADO);
     }
     if (bytesleidos == -1) {
         if (errno == EINTR) {
-            std::cout << "Se intrumpio la atencion " << std::strerror(errno) << std::endl;
+            cout << "Se interrumpio la atencion " << strerror(errno) << endl;
         } else {
-            std::cout << "Error al atender personas " << std::strerror(errno) << std::endl;
+            cout << "Error al atender personas " << strerror(errno) << endl;
         }
     }
 
     canal.cerrar();
     SignalHandler::destruir();
-    std::cout << "Salimos correctamente ";
+    cout << "Ventanilla " << getpid() << " finalizo correctamente" << endl;
 }

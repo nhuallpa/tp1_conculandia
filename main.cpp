@@ -1,12 +1,12 @@
 #include <iostream>
-#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <vector>
 #include <cerrno>
 #include <cstring>
-
-
+#include <cstdio>
+#include <cstdlib>
+#include <sstream>
 
 #include "./Util/Util.h"
 #include "./Fifos/FifoEscritura.h"
@@ -14,57 +14,61 @@
 #include "./Modelo/Persona.h"
 #include "./Modelo/Ventanilla.h"
 #include "./Modelo/FilaEspera.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <sstream>
 
+using namespace std;
 
-int main(int argc,char* argv[]) {
+int main(int argc, char* argv[]) {
 
-    t_parametros tParametros = Util::tomarParametros(argc,argv);
-    int* registroHijos = new int[tParametros.cantVentanillas+1];
+    t_parametros params = Util::tomarParametros(argc, argv);
+    auto registroHijos = new int[params.cantVentanillas+1];
     int pid = 0;
-    int i = 0;
-    for (i = 0; i < tParametros.cantVentanillas; i++) {
+
+    // es el proceso principal
+    cout << "Soy el menu " << getpid() << endl;
+
+    for (int i = 0; i < params.cantVentanillas; i++) {
         pid = fork();
         if (pid == 0) {
-            break;
-        } else {
-            registroHijos[i] = pid;
+            // es un hijo ventanilla
+            cout << "Soy la ventanilla " << getpid() << endl;
+            Ventanilla ventanilla;
+            ventanilla.iniciarAtencion(params.cantSellos);
+
+            exit(0);
         }
+        else registroHijos[i] = pid;
     }
 
+    pid = fork();
     if (pid == 0) {
-        Ventanilla ventanilla;
-        ventanilla.iniciarAtencion(tParametros.cantSellos);
-    } else {
-        pid = fork();  // Fila espera
-        if (pid == 0) {
-            FilaEspera filaEspera;
-            filaEspera.inicializar(tParametros.cantVentanillas);
-        } else {
-            std::cout<<"filaEspera "<<pid<<std::endl;
-            registroHijos[tParametros.cantVentanillas] = pid;
-        }
+        // es el hijo fila espera
+        cout << "Soy la fila espera " << getpid() << endl;
+        FilaEspera filaEspera;
+        filaEspera.inicializar(params.cantVentanillas);
 
-        std::string input = "";
-        std::cout<<"S: Salir"<<std::endl;
-        std::cout<<"Seleccione una opcion:"<<std::endl;
-        getline(std::cin, input);
-
-        while (input != "S") {
-            std::cout<<"S: Salir"<<std::endl;
-            std::cout<<"Seleccione una opcion:"<<std::endl;
-            getline(std::cin, input);
-        }
-        for (int i = 0; i < tParametros.cantVentanillas+1; i++) {
-            std::cout<<"Cerrando hijo:"<<registroHijos[i]<<std::endl;
-            kill(registroHijos[i], SIGINT);
-        }
-        delete registroHijos;
-        std::cout<<"Esperando principal:"<<std::endl;
-        sleep(5);
+        exit(0);
     }
+    registroHijos[params.cantVentanillas] = pid;
+
+    // imprimo y loopeo sobre el menu
+    string input;
+    while (input != "S") {
+        cout << "MENU" << endl;
+        cout << "S: Salir" << endl;
+        cout << "Seleccione una opcion:" << endl;
+        getline(cin, input);
+    }
+
+    // estoy saliendo, mato los procesos hijos
+    for (int i = 0; i < params.cantVentanillas+1; i++) {
+        cout << "Cerrando hijo: " << registroHijos[i] << endl;
+        kill(registroHijos[i], SIGINT);
+    }
+
+    // libero recursos
+    delete registroHijos;
+
+    cout << "Finalizando proceso principal " << getpid() << "..." << endl;
 
     return 0;
 }

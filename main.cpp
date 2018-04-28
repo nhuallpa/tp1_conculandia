@@ -9,6 +9,7 @@
 #include <sstream>
 
 #include "./Util/Util.h"
+#include "./Util/Menu.h"
 #include "./Fifos/FifoEscritura.h"
 #include "./Fifos/FifoLectura.h"
 #include "./Modelo/Persona.h"
@@ -39,8 +40,8 @@ int main(int argc, char* argv[]) {
         else registroHijos[i] = pid;
     }
 
-    pid = fork();
-    if (pid == 0) {
+    int pidFilaEspera = fork();
+    if (pidFilaEspera == 0) {
         // es el hijo fila espera
         cout << "Soy la fila espera " << getpid() << endl;
         FilaEspera filaEspera;
@@ -48,22 +49,10 @@ int main(int argc, char* argv[]) {
 
         exit(0);
     }
-    registroHijos[params.cantVentanillas] = pid;
+    registroHijos[params.cantVentanillas] = pidFilaEspera;
 
-    // imprimo y loopeo sobre el menu
-    string input;
-    while (input != "S") {
-        cout << "MENU" << endl;
-        cout << "S: Salir" << endl;
-        cout << "Seleccione una opcion:" << endl;
-        getline(cin, input);
-    }
-
-    // estoy saliendo, mato los procesos hijos
-    for (int i = 0; i < params.cantVentanillas+1; i++) {
-        cout << "Cerrando hijo: " << registroHijos[i] << endl;
-        kill(registroHijos[i], SIGINT);
-    }
+    Menu menu;
+    menu.inicializar(params, registroHijos);
 
     // libero recursos
     delete registroHijos;
@@ -72,5 +61,4 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-
 

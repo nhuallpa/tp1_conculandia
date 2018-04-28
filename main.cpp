@@ -39,6 +39,17 @@ int main(int argc, char* argv[]) {
         else registroHijos[i] = pid;
     }
 
+    pid = fork();
+    if (pid == 0) {
+        // es el hijo fila espera
+        cout << "Soy la fila espera " << getpid() << endl;
+        FilaEspera filaEspera;
+        filaEspera.inicializar(params.cantVentanillas);
+
+        exit(0);
+    }
+    registroHijos[params.cantVentanillas] = pid;
+
     Menu menu;
     menu.inicializar(params, registroHijos);
 
